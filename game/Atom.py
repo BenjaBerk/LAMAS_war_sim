@@ -8,4 +8,4 @@ class Atom:
         self.about = about
     
     def __str__(self):
-        return f"{self.name}_{self.about.name[0]}"
+        return f"{self.name[0]}_{self.about.name[0]}"
