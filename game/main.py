@@ -2,10 +2,11 @@ from Player import Player
 from Atom import Atom
 from Formula import Formula
 import random
+import WorldModel
 
 class WarSimulation:
     # initializes the simulation
-    def __init__(self, n_players=3):
+    def __init__(self, n_players=6):
         # construct n players
         self.n_players = n_players
         self.names = [
@@ -14,7 +15,7 @@ class WarSimulation:
             'Cleopatra', 
             'De Gaulle', 
             'Elizabeth',
-            'Frederick'
+            'Frederick',
             'Gandhi', 
             'Harald Bluetooth',
             'Isabella', 
@@ -31,7 +32,10 @@ class WarSimulation:
             self.players_bn[name] = player
         
         self.show_players()
-    
+
+        model = WorldModel.WorldModel(n_players=self.n_players, players=self.names)
+        print(f"All possible worlds at start of game: {len(model.worlds)}")
+
     # each player gets to scout
     def scout_round(self):
         print("\nPerforming scout round:")
