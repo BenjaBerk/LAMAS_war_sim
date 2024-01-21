@@ -3,6 +3,7 @@ from Atom import Atom
 from Formula import Formula
 import random
 import WorldModel
+import argparse
 
 class WarSimulation:
     # initializes the simulation
@@ -33,7 +34,7 @@ class WarSimulation:
         
         self.show_players()
 
-        model = WorldModel.WorldModel(n_players=self.n_players, players=self.names)
+        model = WorldModel.WorldModel(n_players=self.n_players, players=self.players)
         print(f"All possible worlds at start of game: {len(model.worlds)}")
 
     # each player gets to scout
@@ -75,7 +76,10 @@ class WarSimulation:
 
 
 if __name__ == "__main__":
-    game = WarSimulation()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", "--num_players", type=int, default=6, help="number of players")
+    args = parser.parse_args()
+    game = WarSimulation(n_players=args.num_players)
     # we have 2 scout rounds, then we resolve
     game.scout_round()
     game.scout_round()
