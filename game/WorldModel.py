@@ -1,5 +1,7 @@
 
 from itertools import product, combinations
+import graphviz
+import pydot
 
 
 class WorldModel:
@@ -33,7 +35,7 @@ class WorldModel:
                 self.worlds[f's{world_id}'][f'w_{player_id}'] = atom3
             world_id += 1
 
-        # print(self.worlds)
+        print(self.worlds)
         # Add relations to the model
         self.relations = {}
         for player in players:
@@ -57,9 +59,34 @@ class WorldModel:
                 # if self.worlds[world][str_atom]:
                 #     break
             self.relations[player.name] = relations
-        # print(self.relations)
+            print(len(relations))
+        print(self.relations)
+
     def remove_worlds(self):
         ...
+
+    def visualize_worlds(self):
+        dot = graphviz.Graph(comment='Round Graph', format='png', engine='circo')
+        unique_tuples = set()
+
+        # Iterate through the tuples in the dictionary value and add them to the set
+        for tuple_list in self.relations.values():
+            for tuple_value in tuple_list:
+                unique_tuples.add(tuple_value)
+
+        # Convert the set back to a list
+        merged_list = list({*map(tuple, map(sorted, list(unique_tuples)))})
+
+        # Define nodes and add them to the graph
+        nodes = self.worlds.keys()
+        for node in nodes:
+            dot.node(node)
+
+        for src, dest in merged_list:
+            dot.edge(src, dest, dir='none', constraint='true')
+        # Save and render the graph
+        output_file = 'round_graph'
+        dot.render(output_file, view=True)
 
 def add_symmetric_edges(relations):
     """Routine adds symmetric edges to Kripke frame
