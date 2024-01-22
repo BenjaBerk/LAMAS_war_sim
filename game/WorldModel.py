@@ -2,12 +2,15 @@
 from itertools import product, combinations
 import graphviz
 import pydot
+from itertools import chain
 
 
 class WorldModel:
     knowledge_base = []
 
     def __init__(self, n_players, players):
+        self.n_players = n_players
+        self.players = players
         player_ids = [f"{i.name[0]}" for i in players]
         n_worlds = n_players ** 3
 
@@ -35,37 +38,60 @@ class WorldModel:
                 self.worlds[f's{world_id}'][f'w_{player_id}'] = atom3
             world_id += 1
 
-        print(self.worlds)
+        # print(self.worlds)
         # Add relations to the model
         self.relations = {}
         for player in players:
             relations = []
-            if player.strength == "strong":
-                str_atom = f"s_{player.name[0]}"
-            elif player.strength == "medium":
-                str_atom = f"m_{player.name[0]}"
-            else:
-                str_atom = f"w_{player.name[0]}"
 
             for world in self.worlds:
                 true_atom_s1 = [key for key, value in self.worlds[world].items() if value and key[2] == player.name[0]]
                 for second_world in self.worlds:
-                    if world == second_world:
-                        continue
+                    # if world == second_world:
+                    #     continue
                     true_atom_s2 = [key for key, value in self.worlds[second_world].items() if
                                     value and key[2] == player.name[0]]
                     if true_atom_s1 == true_atom_s2:
                         relations.append((world, second_world))
-                # if self.worlds[world][str_atom]:
-                #     break
-            self.relations[player.name] = relations
-            print(len(relations))
-        print(self.relations)
+
+            self.relations[player.name[0]] = relations
 
     def remove_worlds(self):
-        ...
 
-    def visualize_worlds(self):
+        for player in self.players:
+            worlds_tb_removed = set()
+
+            knowledge = player.knowledge
+            # Remove every world that does not hold the current knowledge
+            for w, value in self.worlds.items():
+                for formula in knowledge:
+                    formula_op = str(formula).split(' ')
+                    valid = self.check_world_consistency(formula_op, w)
+                    if not valid:
+                        worlds_tb_removed.add(w)
+                        break
+
+            # Remove the relation to the invalid worlds for this player
+            relations_tb_removed = []
+            for r in self.relations[player.name[0]]:
+                if r[0] in worlds_tb_removed or r[1] in worlds_tb_removed:
+                    relations_tb_removed.append(r)
+            self.relations[player.name[0]] = [r for r in self.relations[player.name[0]] if r not in relations_tb_removed]
+
+    def check_world_consistency(self, formula, world):
+        for op in formula:
+            if op[0] == 'K':  # Check whether the formula is at the end
+                accessible_worlds = [t[1] for t in self.relations[op[2]] if t[0] == world]
+                for w in accessible_worlds:  # Get all worlds accessible from this world; (w, u) in R_x
+                    self.check_world_consistency(formula[1:], w)
+            else:
+                # Return the valuation of the atom in this world
+                if self.worlds[world][op]:
+                    return True
+                else:
+                    return False
+
+    def visualize_worlds(self, save_name):
         dot = graphviz.Graph(comment='Round Graph', format='png', engine='circo')
         unique_tuples = set()
 
@@ -76,38 +102,25 @@ class WorldModel:
 
         # Convert the set back to a list
         merged_list = list({*map(tuple, map(sorted, list(unique_tuples)))})
-
         # Define nodes and add them to the graph
-        nodes = self.worlds.keys()
-        for node in nodes:
-            dot.node(node)
+
+        # Remove worlds without any relations
+        nodes_with_edges = list(set(chain(*merged_list)))
+        nodes = [node for node in self.worlds.keys() if node in nodes_with_edges]
+
+        print("Visualizing kripke model...\n")
+        if self.n_players <= 3:
+            # add labels, Up to three players, becomes too cluttered if more
+            for node in nodes:
+                true_atoms = [key for key, value in self.worlds[node].items() if value]
+                node_name = f"{node}\n{','.join(true_atoms)}"
+                dot.node(node, label=node_name)
+        else:
+            for node in nodes:
+                dot.node(node)
 
         for src, dest in merged_list:
             dot.edge(src, dest, dir='none', constraint='true')
         # Save and render the graph
-        output_file = 'round_graph'
+        output_file = save_name
         dot.render(output_file, view=True)
-
-def add_symmetric_edges(relations):
-    """Routine adds symmetric edges to Kripke frame
-    """
-    result = {}
-    for agent, agents_relations in relations.items():
-        result_agents = agents_relations.copy()
-        for r in agents_relations:
-            x, y = r[1], r[0]
-            result_agents.add((x, y))
-        result[agent] = result_agents
-    return result
-
-
-def add_reflexive_edges(worlds, relations):
-    """Routine adds reflexive edges to Kripke frame
-    """
-    result = {}
-    for agent, agents_relations in relations.items():
-        result_agents = agents_relations.copy()
-        for world in worlds:
-            result_agents.add((world.name, world.name))
-            result[agent] = result_agents
-    return result
