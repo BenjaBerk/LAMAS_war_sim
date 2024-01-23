@@ -59,6 +59,9 @@ class WarSimulation:
             for leader in scout_placement[location]:
                 # player should know strength
                 self.players_bn[leader].add_knowledge(strength_atom)
+                # player knows that observed player knows their own strength
+                formula = Formula(form_left=strength_atom, op_type='unary', op=f'K_{location[0]}')
+                self.players_bn[leader].add_knowledge(formula)
                 # other players at the same location know the leader knows the strength
                 formula = Formula(form_left=strength_atom, op_type='unary', op=f'K_{leader[0]}')
                 for other in scout_placement[location]:
@@ -87,7 +90,8 @@ class WarSimulation:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--num_players", type=int, choices=range(2, 7), default=6, help="number of players")
+    parser.add_argument("-n", "--num_players", type=int, choices=range(2, 7), default=3, help="number of players")
+    parser.add_argument("-r", "--scout_rounds", type=int, choices=range(1, 7), default=2, help="number of scout rounds")
     parser.add_argument("-v", "--visualize", action="store_true", help="Create and plot model", default=False)
     args = parser.parse_args()
 
@@ -101,7 +105,6 @@ if __name__ == "__main__":
             raise SystemExit()
 
     game = WarSimulation(n_players=args.num_players, visualize=args.visualize)
-    # we have 2 scout rounds, then we resolve
-    game.scout_round()
-    game.scout_round()
+    # we have some scout rounds, then we resolve
+    for _ in range(args.scout_rounds): game.scout_round()
     game.resolve_round()
