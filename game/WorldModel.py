@@ -3,6 +3,7 @@ from itertools import product, combinations
 import graphviz
 import pydot
 from itertools import chain
+import copy
 
 
 class WorldModel:
@@ -57,7 +58,6 @@ class WorldModel:
             self.relations[player.name[0]] = relations
 
     def remove_worlds(self):
-
         for player in self.players:
             worlds_tb_removed = set()
 
@@ -77,6 +77,24 @@ class WorldModel:
                 if r[0] in worlds_tb_removed or r[1] in worlds_tb_removed:
                     relations_tb_removed.append(r)
             self.relations[player.name[0]] = [r for r in self.relations[player.name[0]] if r not in relations_tb_removed]
+
+        unique_tuples = set()
+
+        # Iterate through the tuples in the dictionary value and add them to the set
+        for tuple_list in self.relations.values():
+            for tuple_value in tuple_list:
+                unique_tuples.add(tuple_value)
+
+        # Convert the set back to a list
+        merged_list = list({*map(tuple, map(sorted, list(unique_tuples)))})
+
+        # Remove worlds without any relations
+        world_w_rel = list(set(chain(*merged_list)))
+
+        current_worlds = list(self.worlds.keys()).copy()
+        for w in current_worlds:
+            if w not in world_w_rel:
+                self.worlds.pop(w)
 
     def check_world_consistency(self, formula, world):
         for op in formula:
@@ -99,6 +117,7 @@ class WorldModel:
         dot = graphviz.Graph(comment='Round Graph', format='png', engine='circo')
         unique_tuples = set()
 
+        print(len(self.worlds))
         # Iterate through the tuples in the dictionary value and add them to the set
         for tuple_list in self.relations.values():
             for tuple_value in tuple_list:
@@ -111,7 +130,6 @@ class WorldModel:
         # Remove worlds without any relations
         nodes_with_edges = list(set(chain(*merged_list)))
         nodes = [node for node in self.worlds.keys() if node in nodes_with_edges]
-
         print("Visualizing kripke model...\n")
         if self.n_players <= 3:
             # add labels, Up to three players, becomes too cluttered if more
