@@ -1,9 +1,9 @@
-
 from itertools import product, combinations
 import graphviz
 import pydot
 from itertools import chain
 import copy
+from collections import defaultdict
 
 
 class WorldModel:
@@ -76,20 +76,10 @@ class WorldModel:
             for r in self.relations[player.name[0]]:
                 if r[0] in worlds_tb_removed or r[1] in worlds_tb_removed:
                     relations_tb_removed.append(r)
-            self.relations[player.name[0]] = [r for r in self.relations[player.name[0]] if r not in relations_tb_removed]
+            self.relations[player.name[0]] = [r for r in self.relations[player.name[0]] if
+                                              r not in relations_tb_removed]
 
-        unique_tuples = set()
-
-        # Iterate through the tuples in the dictionary value and add them to the set
-        for tuple_list in self.relations.values():
-            for tuple_value in tuple_list:
-                unique_tuples.add(tuple_value)
-
-        # Convert the set back to a list
-        merged_list = list({*map(tuple, map(sorted, list(unique_tuples)))})
-
-        # Remove worlds without any relations
-        world_w_rel = list(set(chain(*merged_list)))
+        _, world_w_rel = get_unique_worlds(self.relations)
 
         current_worlds = list(self.worlds.keys()).copy()
         for w in current_worlds:
@@ -115,23 +105,12 @@ class WorldModel:
 
     def visualize_worlds(self, save_name):
         dot = graphviz.Graph(comment='Round Graph', format='png', engine='circo')
-        unique_tuples = set()
+        merged_list, nodes_with_edges = get_unique_worlds(self.relations)
 
-        print(len(self.worlds))
-        # Iterate through the tuples in the dictionary value and add them to the set
-        for tuple_list in self.relations.values():
-            for tuple_value in tuple_list:
-                unique_tuples.add(tuple_value)
-
-        # Convert the set back to a list
-        merged_list = list({*map(tuple, map(sorted, list(unique_tuples)))})
-        # Define nodes and add them to the graph
-
-        # Remove worlds without any relations
-        nodes_with_edges = list(set(chain(*merged_list)))
         nodes = [node for node in self.worlds.keys() if node in nodes_with_edges]
+        rel_label = get_relation_labels(self.relations)
         print("Visualizing kripke model...\n")
-        if self.n_players <= 3:
+        if self.n_players <= 3 or len(self.worlds) <= 10:
             # add labels, Up to three players, becomes too cluttered if more
             for node in nodes:
                 true_atoms = [key for key, value in self.worlds[node].items() if value]
@@ -142,7 +121,41 @@ class WorldModel:
                 dot.node(node)
 
         for src, dest in merged_list:
-            dot.edge(src, dest, dir='none', constraint='true')
+            if src == dest:
+                continue
+            if self.n_players <= 3 or len(self.worlds) <= 10:
+                relation = ','.join(['R' + item for item in rel_label[(str(src), str(dest))]])
+                dot.edge(src, dest, dir='both', constraint='false', label=relation)
+
+            else:
+                dot.edge(src, dest, dir='both', constraint='true')
         # Save and render the graph
         output_file = f"plots/{save_name}"
         dot.render(output_file, view=True)
+
+
+def get_relation_labels(relations):
+    grouped_dict = defaultdict(list)
+
+    for key, value in relations.items():
+        for pair in value:
+            grouped_dict[pair].append(key)
+
+    result_dict = dict(grouped_dict)
+    return result_dict
+
+
+def get_unique_worlds(relation_dict):
+    unique_tuples = set()
+
+    # Iterate through the tuples in the dictionary value and add them to the set
+    for tuple_list in relation_dict.values():
+        for tuple_value in tuple_list:
+            unique_tuples.add(tuple_value)
+
+    # Convert the set back to a list
+    merged_list = list({*map(tuple, map(sorted, list(unique_tuples)))})
+
+    # Remove worlds without any relations
+    world_w_rel = set(chain(*merged_list))
+    return merged_list, world_w_rel
