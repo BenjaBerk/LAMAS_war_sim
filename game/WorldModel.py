@@ -126,5 +126,5 @@ class WorldModel:
         for src, dest in merged_list:
             dot.edge(src, dest, dir='none', constraint='true')
         # Save and render the graph
-        output_file = save_name
+        output_file = f"plots/{save_name}"
         dot.render(output_file, view=True)
