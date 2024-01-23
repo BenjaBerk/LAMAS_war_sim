@@ -7,7 +7,7 @@ import argparse
 
 class WarSimulation:
     # initializes the simulation
-    def __init__(self, n_players=6, visualize=False):
+    def __init__(self, n_players=3, visualize=False):
         # construct n players
         self.visualize = visualize
         self.n_players = n_players
@@ -63,6 +63,10 @@ class WarSimulation:
                 formula = Formula(form_left=strength_atom, op_type='unary', op=f'K_{leader[0]}')
                 for other in scout_placement[location]:
                     if (leader != other): self.players_bn[other].add_knowledge(formula)
+                # and if EVERYONE is there, also add common knowledge
+                if len(scout_placement[location]) == self.n_players:
+                    formula = Formula(form_left=strength_atom, op_type='unary', op='C')
+                    self.players_bn[leader].add_knowledge(formula)
 
         print("\nstate after round:")
         self.show_players()

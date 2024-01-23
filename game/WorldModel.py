@@ -84,6 +84,10 @@ class WorldModel:
                 accessible_worlds = [t[1] for t in self.relations[op[2]] if t[0] == world]
                 for w in accessible_worlds:  # Get all worlds accessible from this world; (w, u) in R_x
                     self.check_world_consistency(formula[1:], w)
+            elif op[0] == 'C':
+                accessible_worlds = [t[1] for u in self.relations.keys() for t in self.relations[u] if t[0] == world]
+                for w in accessible_worlds:
+                    self.check_world_consistency(formula[1:], w)
             else:
                 # Return the valuation of the atom in this world
                 if self.worlds[world][op]:

@@ -1,0 +1,6 @@
+// Round Graph
+graph {
+	s2 [label="s2
+s_B,m_D"]
+	s2 -- s2 [constraint=true dir=none]
+}
