@@ -12,6 +12,9 @@ class WorldModel:
     def __init__(self, n_players, players):
         self.n_players = n_players
         self.players = players
+        self.real_atom = []
+        for player in players:
+            self.real_atom.append(f'{player.strength[0]}_{player.name[0]}')
         player_ids = [f"{i.name[0]}" for i in players]
         n_worlds = n_players ** 3
 
@@ -39,7 +42,10 @@ class WorldModel:
                 self.worlds[f's{world_id}'][f'w_{player_id}'] = atom3
             world_id += 1
 
-        # print(self.worlds)
+        # for key, value in self.worlds:
+        #     for atom in self.real_atom:
+        #         if value[atom]:
+
         # Add relations to the model
         self.relations = {}
         for player in players:
@@ -110,12 +116,15 @@ class WorldModel:
         nodes = [node for node in self.worlds.keys() if node in nodes_with_edges]
         rel_label = get_relation_labels(self.relations)
         print("Visualizing kripke model...\n")
-        if self.n_players <= 3 or len(self.worlds) <= 10:
+        if self.n_players <= 3 or len(self.worlds) <= 15:
             # add labels, Up to three players, becomes too cluttered if more
             for node in nodes:
                 true_atoms = [key for key, value in self.worlds[node].items() if value]
                 node_name = f"{node}\n{','.join(true_atoms)}"
-                dot.node(node, label=node_name)
+                if true_atoms == self.real_atom:
+                    dot.node(node, label=node_name, color='red', filled='true')
+                else:
+                    dot.node(node, label=node_name)
         else:
             for node in nodes:
                 dot.node(node)
@@ -124,11 +133,11 @@ class WorldModel:
             if src == dest:
                 continue
             if self.n_players <= 3 or len(self.worlds) <= 10:
-                relation = ','.join(['R' + item for item in rel_label[(str(src), str(dest))]])
-                dot.edge(src, dest, dir='both', constraint='false', label=relation)
+                relation = ', '.join(['R' + item for item in rel_label[(str(src), str(dest))]])
+                dot.edge(src, dest, dir='both', label=relation)
 
             else:
-                dot.edge(src, dest, dir='both', constraint='true')
+                dot.edge(src, dest, dir='none')
         # Save and render the graph
         output_file = f"plots/{save_name}"
         dot.render(output_file, view=True)
