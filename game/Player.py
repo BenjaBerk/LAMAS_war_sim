@@ -1,14 +1,17 @@
 import random
 from Atom import Atom
 from Formula import Formula
+from strategies.Strategy import StrategyEnum
+from strategies.StrategyFactory import StrategyFactory
 
 class Player:
-    def __init__(self, name, strength=None):
+    def __init__(self, name, strength=None, strategy=StrategyEnum.DEFENSIVE):
         if not strength:
             self.strength = random.choice(["strong", "medium", "weak"])
         else:
             self.strength = strength
         self.name = name
+        self.strategy = StrategyFactory().get(strategy)
         self.init_knowledge()
     
     # the knowledge is a list of formulas

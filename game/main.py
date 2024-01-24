@@ -2,13 +2,15 @@ from Player import Player
 from Atom import Atom
 from Formula import Formula
 import random
+from typing import List
 import WorldModel
 import argparse
 from scenario import scenario
+from strategies.Strategy import StrategyEnum
 
 class WarSimulation:
     # initializes the simulation
-    def __init__(self, n_players=3, visualize=False, strenghts=None):
+    def __init__(self, n_players=3, visualize=False, strengths=None):
         # construct n players
         self.visualize = visualize
         self.n_players = n_players
@@ -28,19 +30,19 @@ class WarSimulation:
             ]
         random.shuffle(self.names)
         self.names = self.names[:n_players]
-        self.players = []
+        self.players: List(Player) = []
         self.players_bn = {}
         for i in range(len(self.names)):
-            strenght = strenghts[i] if strenghts else None
-            player = Player(name=self.names[i], strength=strenght)
+            strength = strengths[i] if strengths else None
+            player = Player(name=self.names[i], strength=strength, strategy=random.choice([StrategyEnum.AGGRESSIVE, StrategyEnum.DEFENSIVE, StrategyEnum.CAREFUL_BANDING]))
             self.players.append(player)
             self.players_bn[self.names[i]] = player
         self.show_players()
 
         self.model = WorldModel.WorldModel(n_players=self.n_players, players=self.players)
         print(f"All possible worlds at start of game: {len(self.model.worlds)}")
-        # if self.visualize:
-        #     self.model.visualize_worlds(f'initial_model_{self.n_players}_players')
+        if self.visualize:
+            self.model.visualize_worlds(f'initial_model_{self.n_players}_players')
 
     # each player gets to scout
     def scout_round(self, decisions=None):
@@ -87,8 +89,15 @@ class WarSimulation:
 
     # based on knowledge, declare wars
     def resolve_round(self):
-        #TODO
         print("Performing resolve round:")
+        
+        actions = []
+        #TODO
+        for player in self.players:
+            actions.append(player.strategy.defineAction(player))
+        
+        print(actions)
+        
     
     def show_players(self):
         for player in self.players:
@@ -110,7 +119,7 @@ if __name__ == "__main__":
     scout_rounds = args.scout_rounds
     if (args.scenario):
         print(scenario)
-        num_players = len(scenario["strenghts"])
+        num_players = len(scenario["strengths"])
         scout_rounds = len(scenario["decisions"])
 
     if num_players > 4 and visualize:
@@ -122,7 +131,7 @@ if __name__ == "__main__":
         else:
             raise SystemExit()
 
-    game = WarSimulation(n_players=num_players, visualize=visualize, strenghts=scenario["strenghts"] if args.scenario else None) #Sorry for making this line a hell to read! -S
+    game = WarSimulation(n_players=num_players, visualize=visualize, strengths=scenario["strengths"] if args.scenario else None) #Sorry for making this line a hell to read! -S
     # we have some scout rounds, then we resolve
     if args.scenario:
         for i in range(scout_rounds): game.scout_round(scenario["decisions"][i])
