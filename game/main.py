@@ -4,6 +4,7 @@ from Formula import Formula
 import random
 import WorldModel
 import argparse
+from scenario import scenario
 
 class WarSimulation:
     # initializes the simulation
@@ -42,12 +43,18 @@ class WarSimulation:
         #     self.model.visualize_worlds(f'initial_model_{self.n_players}_players')
 
     # each player gets to scout
-    def scout_round(self):
+    def scout_round(self, decisions=None):
         print(f"\nPerforming scout round {self.round_count}:")
+
         # step 1: place scouts
         scout_placement = {}
         for name in self.names: scout_placement[name] = []
-        for name in self.names: scout_placement[random.choice(self.names)].append(name)
+        if not decisions:
+            print(f"random.choice(self.names) {random.choice(self.names)}, name {name}")
+            for name in self.names: scout_placement[random.choice(self.names)].append(name)
+        else:
+            for i in range(len(decisions)):
+                scout_placement[self.players[decisions[i]].name].append(self.players[i].name)
         print("scout placement:", scout_placement)
 
         # step 2: infer knowledge
@@ -93,10 +100,21 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--num_players", type=int, choices=range(2, 7), default=3, help="number of players")
     parser.add_argument("-r", "--scout_rounds", type=int, choices=range(1, 7), default=2, help="number of scout rounds")
     parser.add_argument("-v", "--visualize", action="store_true", help="Create and plot model", default=False)
+    parser.add_argument("-s", "--scenario", action="store_true", default=False,
+                        help="read the input from scenario.py instead of using random actions. Overwrites -n and -r.")
     args = parser.parse_args()
+    print(args)
 
-    if args.num_players > 4 and args.visualize:
-        print(f"You have chosen to visualize the model for {args.num_players} players, this can take a very long "
+    num_players = args.num_players
+    visualize = args.visualize
+    scout_rounds = args.scout_rounds
+    if (args.scenario):
+        print(scenario)
+        num_players = len(scenario["strenghts"])
+        scout_rounds = len(scenario["decisions"])
+
+    if num_players > 4 and visualize:
+        print(f"You have chosen to visualize the model for {num_players} players, this can take a very long "
               f"time. \n Do you want to proceed anyway? ")
         answer = input("yes/no: ")
         if answer == "yes":
@@ -104,7 +122,10 @@ if __name__ == "__main__":
         else:
             raise SystemExit()
 
-    game = WarSimulation(n_players=args.num_players, visualize=args.visualize)
+    game = WarSimulation(n_players=num_players, visualize=visualize)
     # we have some scout rounds, then we resolve
-    for _ in range(args.scout_rounds): game.scout_round()
+    if args.scenario:
+        for i in range(scout_rounds): game.scout_round(scenario["decisions"][i])
+    else:
+        for i in range(scout_rounds): game.scout_round() #random decisions
     game.resolve_round()
