@@ -110,7 +110,11 @@ class WorldModel:
                     return False
 
     def visualize_worlds(self, save_name):
-        dot = graphviz.Graph(comment='Round Graph', format='png', engine='circo')
+        if len(self.worlds) <= 5:
+            engine = 'dot'
+        else:
+            engine = 'circo'
+        dot = graphviz.Graph(comment='Round Graph', format='png', engine=engine)
         merged_list, nodes_with_edges = get_unique_worlds(self.relations)
 
         nodes = [node for node in self.worlds.keys() if node in nodes_with_edges]
