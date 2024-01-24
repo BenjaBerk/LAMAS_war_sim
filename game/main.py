@@ -92,9 +92,14 @@ class WarSimulation:
         print("Performing resolve round:")
         
         actions = []
+        players_initials = map(lambda player: player.name[0], self.players)
+        # print("AAAAA", list(players_initials) )
         #TODO
         for player in self.players:
-            actions.append(player.strategy.defineAction(player))
+            # print(f"player - {player}")
+            # print(f"player.strategy - {player.strategy}")
+            # print(f"player.strategy.defineAction - {player.strategy.defineAction}")
+            actions.append(player.strategy.defineAction(player, players_initials))
         
         print(actions)
         

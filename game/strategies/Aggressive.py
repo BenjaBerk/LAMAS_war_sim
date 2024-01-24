@@ -1,6 +1,6 @@
 from strategies.Strategy import Strategy
 
-class Defensive(Strategy):
+class Aggressive(Strategy):
     def __init__(self):
         pass
         

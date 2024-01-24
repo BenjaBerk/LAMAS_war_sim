@@ -1,6 +1,6 @@
 from strategies.Strategy import Strategy
 
-class Defensive(Strategy):
+class CarefulBanding(Strategy):
     def __init__(self):
         pass
         

@@ -9,5 +9,5 @@ class StrategyEnum(Enum):
 
 class Strategy():
     @abstractmethod
-    def defineAction(self, player):
+    def defineAction(self, player, list_of_players):
         pass

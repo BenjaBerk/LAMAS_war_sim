@@ -11,7 +11,7 @@ class Player:
         else:
             self.strength = strength
         self.name = name
-        self.strategy = StrategyFactory().get(strategy)
+        self.strategy = StrategyFactory().create(strategy)
         self.init_knowledge()
     
     # the knowledge is a list of formulas
