@@ -21,7 +21,8 @@ class Player:
         self.add_knowledge(Atom(name=self.strength, about=self))
     
     def add_knowledge(self, formula):
-        formula = Formula(form_left=formula, op_type="unary", op=f"K_{self.name[0]}")
+        if not isinstance(formula, Formula) or formula.op_type != "unary" or formula.op != "C": 
+            formula = Formula(form_left=formula, op_type="unary", op=f"K_{self.name[0]}")
         if not (str(formula) in [str(knowledge) for knowledge in self.knowledge]):
             self.knowledge = {*self.knowledge, formula}
 

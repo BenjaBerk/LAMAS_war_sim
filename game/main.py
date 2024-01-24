@@ -70,7 +70,7 @@ class WarSimulation:
                 self.players_bn[leader].add_knowledge(strength_atom)
                 # player knows that observed player knows their own strength
                 formula = Formula(form_left=strength_atom, op_type='unary', op=f'K_{location[0]}')
-                self.players_bn[leader].add_knowledge(formula)
+                if location != leader: self.players_bn[leader].add_knowledge(formula)
                 # other players at the same location know the leader knows the strength
                 formula = Formula(form_left=strength_atom, op_type='unary', op=f'K_{leader[0]}')
                 for other in scout_placement[location]:
