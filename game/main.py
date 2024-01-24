@@ -8,7 +8,7 @@ from scenario import scenario
 
 class WarSimulation:
     # initializes the simulation
-    def __init__(self, n_players=3, visualize=False):
+    def __init__(self, n_players=3, visualize=False, strenghts=None):
         # construct n players
         self.visualize = visualize
         self.n_players = n_players
@@ -30,10 +30,15 @@ class WarSimulation:
         self.names = self.names[:n_players]
         self.players = []
         self.players_bn = {}
-        for name in self.names:
-            player = Player(name=name)
+        for i in range(len(self.names)):
+            strenght = strenghts[i] if strenghts else None
+            player = Player(name=self.names[i], strength=strenght)
             self.players.append(player)
-            self.players_bn[name] = player
+            self.players_bn[self.names[i]] = player
+        # for name in self.names:
+        #     player = Player(name=name)
+        #     self.players.append(player)
+        #     self.players_bn[name] = player
         
         self.show_players()
 
@@ -122,7 +127,7 @@ if __name__ == "__main__":
         else:
             raise SystemExit()
 
-    game = WarSimulation(n_players=num_players, visualize=visualize)
+    game = WarSimulation(n_players=num_players, visualize=visualize, strenghts=scenario["strenghts"] if args.scenario else None) #Sorry for making this line a hell to read! -S
     # we have some scout rounds, then we resolve
     if args.scenario:
         for i in range(scout_rounds): game.scout_round(scenario["decisions"][i])

@@ -3,8 +3,11 @@ from Atom import Atom
 from Formula import Formula
 
 class Player:
-    def __init__(self, name):
-        self.strength = random.choice(["strong", "medium", "weak"])
+    def __init__(self, name, strength=None):
+        if not strength:
+            self.strength = random.choice(["strong", "medium", "weak"])
+        else:
+            self.strength = strength
         self.name = name
         self.init_knowledge()
     
