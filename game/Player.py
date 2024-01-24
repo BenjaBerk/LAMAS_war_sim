@@ -18,7 +18,7 @@ class Player:
     # implicitly a conjunction of those formulas each preceded by K_i where i=player
     def init_knowledge(self):
         self.knowledge = {}
-        self.add_knowledge(Atom(name=self.strength, about=self))
+        self.add_knowledge(Formula(Atom(name=self.strength, about=self)))
     
     def add_knowledge(self, formula):
         if not isinstance(formula, Formula) or formula.op_type != "unary" or formula.op != "C": 
