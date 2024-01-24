@@ -35,11 +35,6 @@ class WarSimulation:
             player = Player(name=self.names[i], strength=strenght)
             self.players.append(player)
             self.players_bn[self.names[i]] = player
-        # for name in self.names:
-        #     player = Player(name=name)
-        #     self.players.append(player)
-        #     self.players_bn[name] = player
-        
         self.show_players()
 
         self.model = WorldModel.WorldModel(n_players=self.n_players, players=self.players)
@@ -54,10 +49,10 @@ class WarSimulation:
         # step 1: place scouts
         scout_placement = {}
         for name in self.names: scout_placement[name] = []
-        if not decisions:
+        if not decisions: #random
             print(f"random.choice(self.names) {random.choice(self.names)}, name {name}")
             for name in self.names: scout_placement[random.choice(self.names)].append(name)
-        else:
+        else: #scenario editor
             for i in range(len(decisions)):
                 scout_placement[self.players[decisions[i]].name].append(self.players[i].name)
         print("scout placement:", scout_placement)
