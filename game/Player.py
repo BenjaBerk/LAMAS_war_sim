@@ -28,4 +28,4 @@ class Player:
 
     def __str__(self):
         knowledge_str = ' ^ '.join(str(formula) for formula in self.knowledge)
-        return f"player: {self.name}\n- strength: {self.strength}\n- knowledge: {knowledge_str}"
+        return f"player: {self.name}\n- strength: {self.strength}\n- knowledge: {knowledge_str}\n- strategy: {str(self.strategy)}"

@@ -7,3 +7,6 @@ class CarefulBanding(Strategy):
     def defineAction(self, player, list_of_players) -> str:
         return 2
         pass
+
+    def __str__(self):
+        return "careful_banding"

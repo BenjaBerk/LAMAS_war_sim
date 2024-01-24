@@ -8,9 +8,9 @@ class StrategyFactory():
         pass
             
     def create(self, strategy=StrategyEnum.DEFENSIVE):
-        if (strategy == StrategyEnum.DEFENSIVE):
+        if (strategy == StrategyEnum.DEFENSIVE or strategy == StrategyEnum.DEFENSIVE.value):
             return Defensive()
-        elif (strategy == StrategyEnum.AGGRESSIVE):
+        elif (strategy == StrategyEnum.AGGRESSIVE or strategy == StrategyEnum.AGGRESSIVE.value):
             return Aggressive()
-        elif (strategy == StrategyEnum.CAREFUL_BANDING):
+        elif (strategy == StrategyEnum.CAREFUL_BANDING or strategy == StrategyEnum.CAREFUL_BANDING.value):
             return CarefulBanding()

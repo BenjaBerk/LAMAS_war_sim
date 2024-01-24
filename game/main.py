@@ -10,7 +10,7 @@ from strategies.Strategy import StrategyEnum
 
 class WarSimulation:
     # initializes the simulation
-    def __init__(self, n_players=3, visualize=False, strengths=None):
+    def __init__(self, n_players=3, visualize=False, strengths=None, strategies=None):
         # construct n players
         self.visualize = visualize
         self.n_players = n_players
@@ -34,7 +34,12 @@ class WarSimulation:
         self.players_bn = {}
         for i in range(len(self.names)):
             strength = strengths[i] if strengths else None
-            player = Player(name=self.names[i], strength=strength, strategy=random.choice([StrategyEnum.AGGRESSIVE, StrategyEnum.DEFENSIVE, StrategyEnum.CAREFUL_BANDING]))
+            strategy=strategies[i] if strategies else random.choice(
+                                [StrategyEnum.AGGRESSIVE,
+                                 StrategyEnum.DEFENSIVE,
+                                 StrategyEnum.CAREFUL_BANDING]
+            )
+            player = Player(name=self.names[i], strength=strength, strategy=strategy)
             self.players.append(player)
             self.players_bn[self.names[i]] = player
         self.show_players()
@@ -136,7 +141,10 @@ if __name__ == "__main__":
         else:
             raise SystemExit()
 
-    game = WarSimulation(n_players=num_players, visualize=visualize, strengths=scenario["strengths"] if args.scenario else None) #Sorry for making this line a hell to read! -S
+    game = WarSimulation(n_players=num_players, visualize=visualize,
+                         strengths=scenario["strengths"] if args.scenario else None,
+                         strategies=scenario["strategies"] if args.scenario else None)
+                        #Sorry for making this line a hell to read! -S
     # we have some scout rounds, then we resolve
     if args.scenario:
         for i in range(scout_rounds): game.scout_round(scenario["decisions"][i])
