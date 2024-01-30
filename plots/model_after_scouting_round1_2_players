@@ -1,6 +1,12 @@
 // Round Graph
 graph {
-	s2 [label="s2
-s_B,m_D"]
-	s2 -- s2 [constraint=true dir=none]
+	s7 [label="s7
+w_K,s_I"]
+	s8 [label="s8
+w_K,m_I" color=red filled=true]
+	s9 [label="s9
+w_K,w_I"]
+	s8 -- s9 [label=RK dir=both]
+	s7 -- s8 [label=RK dir=both]
+	s7 -- s9 [label=RK dir=both]
 }

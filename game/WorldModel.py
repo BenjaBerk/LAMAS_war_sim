@@ -18,6 +18,7 @@ class WorldModel:
 
         atoms = [['s', 'Not(m)', 'Not(w)'], ['Not(s)', 'm', 'Not(w)'],
                  ['Not(s)', 'Not(m)', 'w']]
+        atoms = [['s', 'Not(w)'], ['Not(s)', 'w']]
         comb = list(product(player_ids, atoms))
         self.worlds = {}
         possible_worlds = []
@@ -32,11 +33,11 @@ class WorldModel:
             for p in w:
                 player_id = p[0]
                 atom1 = True if p[1][0] == 's' else False
-                atom2 = True if p[1][1] == 'm' else False
-                atom3 = True if p[1][2] == 'w' else False
+                # atom2 = True if p[1][1] == 'm' else False
+                atom3 = True if p[1][1] == 'w' else False
 
                 self.worlds[f's{world_id}'][f's_{player_id}'] = atom1
-                self.worlds[f's{world_id}'][f'm_{player_id}'] = atom2
+                # self.worlds[f's{world_id}'][f'm_{player_id}'] = atom2
                 self.worlds[f's{world_id}'][f'w_{player_id}'] = atom3
             world_id += 1
 
@@ -66,12 +67,19 @@ class WorldModel:
             worlds_tb_removed = set()
 
             knowledge = player.knowledge
-            # Remove every world that does not hold the current knowledge
+            # # Remove every world that does not hold the current knowledge
+            # for formula in knowledge:
+            #     formula_op = str(formula).split(' ')
+            #     valid = self.check_world_consistency(formula_op, 's8')
+            #     if not valid:
+            #         worlds_tb_removed.add('s8')
+            #         break
             for w, value in self.worlds.items():
                 for formula in knowledge:
                     formula_op = str(formula).split(' ')
                     valid = self.check_world_consistency(formula_op, w)
                     if not valid:
+                        print(w)
                         worlds_tb_removed.add(w)
                         break
 
