@@ -26,7 +26,7 @@ class WarSimulation:
             'Julius Caesar', 
             'Khan'
             ]
-        random.shuffle(self.names)
+        # random.shuffle(self.names)
         self.names = self.names[:n_players]
         self.players = []
         self.players_bn = {}
