@@ -1,6 +1,6 @@
 # Higher order knowledge scenario
 scenario = {
-    "strenghts": ["weak", "strong", "strong"],
+    "strenghts": ["weak", "powerful", "powerful"],
     "strategies": ["defensive","defensive","defensive"],
     "decisions": [
         [0,0, 1], 
@@ -10,7 +10,7 @@ scenario = {
 
 # Common Knowledge scenario
 # scenario = {
-#     "strenghts": ["weak", "strong", "strong"],
+#     "strenghts": ["weak", "powerful", "powerful"],
 #     "strategies": ["defensive","defensive","defensive"],
 #     "decisions": [
 #         [0,0, 0], 

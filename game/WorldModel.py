@@ -18,7 +18,7 @@ class WorldModel:
 
         atoms = [['s', 'Not(m)', 'Not(w)'], ['Not(s)', 'm', 'Not(w)'],
                  ['Not(s)', 'Not(m)', 'w']]
-        atoms = [['s', 'Not(w)'], ['Not(s)', 'w']]
+        atoms = [['p', 'Not(w)'], ['Not(p)', 'w']]
         comb = list(product(player_ids, atoms))
         self.worlds = {}
         possible_worlds = []
@@ -32,18 +32,14 @@ class WorldModel:
             self.worlds[f's{world_id}'] = {}
             for p in w:
                 player_id = p[0]
-                atom1 = True if p[1][0] == 's' else False
+                atom1 = True if p[1][0] == 'p' else False
                 # atom2 = True if p[1][1] == 'm' else False
                 atom3 = True if p[1][1] == 'w' else False
 
-                self.worlds[f's{world_id}'][f's_{player_id}'] = atom1
+                self.worlds[f's{world_id}'][f'p_{player_id}'] = atom1
                 # self.worlds[f's{world_id}'][f'm_{player_id}'] = atom2
                 self.worlds[f's{world_id}'][f'w_{player_id}'] = atom3
             world_id += 1
-
-        # for key, value in self.worlds:
-        #     for atom in self.real_atom:
-        #         if value[atom]:
 
         # Add relations to the model
         self.relations = {}
@@ -53,8 +49,7 @@ class WorldModel:
             for world in self.worlds:
                 true_atom_s1 = [key for key, value in self.worlds[world].items() if value and key[2] == player.name[0]]
                 for second_world in self.worlds:
-                    # if world == second_world:
-                    #     continue
+
                     true_atom_s2 = [key for key, value in self.worlds[second_world].items() if
                                     value and key[2] == player.name[0]]
                     if true_atom_s1 == true_atom_s2:
@@ -67,13 +62,7 @@ class WorldModel:
             worlds_tb_removed = set()
 
             knowledge = player.knowledge
-            # # Remove every world that does not hold the current knowledge
-            # for formula in knowledge:
-            #     formula_op = str(formula).split(' ')
-            #     valid = self.check_world_consistency(formula_op, 's8')
-            #     if not valid:
-            #         worlds_tb_removed.add('s8')
-            #         break
+
             for w, value in self.worlds.items():
                 for formula in knowledge:
                     formula_op = str(formula).split(' ')
@@ -130,7 +119,7 @@ class WorldModel:
             # add labels, Up to three players, becomes too cluttered if more
             for node in nodes:
                 true_atoms = [key for key, value in self.worlds[node].items() if value]
-                node_name = f"{node}\n{','.join(true_atoms)}"
+                node_name = f"{','.join([i[0] for i in true_atoms])}"
                 if true_atoms == self.real_atom:
                     dot.node(node, label=node_name, color='red', filled='true')
                 else:
@@ -143,7 +132,7 @@ class WorldModel:
             if src == dest:
                 continue
             if self.n_players <= 3 or len(self.worlds) <= 10:
-                relation = ', '.join(['R' + item for item in rel_label[(str(src), str(dest))]])
+                relation = ', '.join([item for item in rel_label[(str(src), str(dest))]])
                 dot.edge(src, dest, dir='both', label=relation)
 
             else:
