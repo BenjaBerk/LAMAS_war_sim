@@ -1,8 +1,0 @@
-// Round Graph
-graph {
-	s5 [label="s5
-w_A,s_B,s_C" color=red filled=true]
-	s6 [label="s6
-w_A,s_B,w_C"]
-	s5 -- s6 [label=RA dir=both]
-}
