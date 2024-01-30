@@ -1,8 +1,6 @@
 from itertools import product, combinations
 import graphviz
-import pydot
 from itertools import chain
-import copy
 from collections import defaultdict
 
 

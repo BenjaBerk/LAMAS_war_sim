@@ -1,7 +1,19 @@
+# Higher order knowledge scenario
 scenario = {
-    "strenghts": ["weak", "medium", "strong"],
+    "strenghts": ["weak", "strong", "strong"],
+    "strategies": ["defensive","defensive","defensive"],
     "decisions": [
-        [0,1,1,], # player 0 scouts 0, player 1 scouts 1, player 2 scouts 1
-        [1,1,1,], # all players scout player 1
+        [0,0, 1], 
+        [1,2, 0], 
     ]
 }
+
+# Common Knowledge scenario
+# scenario = {
+#     "strenghts": ["weak", "strong", "strong"],
+#     "strategies": ["defensive","defensive","defensive"],
+#     "decisions": [
+#         [0,0, 0], 
+#         [1,2, 1], 
+#     ]
+# }
