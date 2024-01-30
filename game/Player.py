@@ -5,7 +5,7 @@ from Formula import Formula
 class Player:
     def __init__(self, name, strength=None):
         if not strength:
-            self.strength = random.choice(["strong", "medium", "weak"])
+            self.strength = random.choice(["strong", "weak"])
         else:
             self.strength = strength
         self.name = name
