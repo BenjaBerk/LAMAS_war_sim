@@ -123,4 +123,3 @@ if __name__ == "__main__":
         for i in range(scout_rounds): game.scout_round(scenario["decisions"][i])
     else:
         for i in range(scout_rounds): game.scout_round() #random decisions
-    game.resolve_round()

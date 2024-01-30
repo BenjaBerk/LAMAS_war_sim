@@ -1,32 +1,20 @@
 // Round Graph
 graph {
 	s1 [label="s1
-s_G,s_D,s_E"]
-	s2 [label="s2
-s_G,s_D,w_E"]
-	s3 [label="s3
-s_G,w_D,s_E"]
+s_A,s_B,s_C"]
 	s5 [label="s5
-w_G,s_D,s_E" color=red filled=true]
+w_A,s_B,s_C" color=red filled=true]
 	s6 [label="s6
-w_G,s_D,w_E"]
+w_A,s_B,w_C"]
 	s7 [label="s7
-w_G,w_D,s_E"]
+w_A,w_B,s_C"]
 	s8 [label="s8
-w_G,w_D,w_E"]
-	s1 -- s5 [label="RD, RE" dir=both]
-	s2 -- s6 [label=RD dir=both]
-	s7 -- s8 [label=RG dir=both]
-	s3 -- s7 [label=RE dir=both]
-	s1 -- s6 [label=RD dir=both]
-	s1 -- s3 [label=RE dir=both]
-	s1 -- s7 [label=RE dir=both]
-	s1 -- s2 [label=RD dir=both]
-	s5 -- s6 [label="RG, RD" dir=both]
-	s5 -- s8 [label=RG dir=both]
-	s5 -- s7 [label="RG, RE" dir=both]
-	s3 -- s5 [label=RE dir=both]
-	s6 -- s7 [label=RG dir=both]
-	s6 -- s8 [label=RG dir=both]
-	s2 -- s5 [label=RD dir=both]
+w_A,w_B,w_C"]
+	s5 -- s8 [label=RA dir=both]
+	s5 -- s7 [label=RA dir=both]
+	s6 -- s8 [label=RA dir=both]
+	s5 -- s6 [label="RA, RB" dir=both]
+	s6 -- s7 [label=RA dir=both]
+	s1 -- s5 [label=RC dir=both]
+	s7 -- s8 [label=RA dir=both]
 }
