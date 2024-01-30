@@ -84,11 +84,6 @@ class WarSimulation:
         if self.visualize:
             self.model.visualize_worlds(f"model_after_scouting_round{self.round_count}_{self.n_players}_players")
         self.round_count += 1
-
-    # based on knowledge, declare wars
-    def resolve_round(self):
-        #TODO
-        print("Performing resolve round:")
     
     def show_players(self):
         for player in self.players:
